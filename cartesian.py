@@ -63,7 +63,7 @@ class Cartesian:
    self.length=0
    self.a=null
  def Set( self, x, y, w=null, h=null ):
-  if (y == null && self.__class__ == "Cartesian"):
+  if (y == null and self.__class__ == "Cartesian"):
    self.Set(x.x,x.y,x.w,x.h)
    self.Update()
    return
