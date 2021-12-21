@@ -2,21 +2,19 @@
 class Cartesian:
  def __init(self, *argv):
   self.Init()
-  match len(argv):
-   case 0:
-   case 1:
-    self.Set(argv[0],0)
-   case 2:
-    self.Set(argv[0],argv[1])
-   case 3:
-    self.Set(argv[0],argv[1])
-    self.a=argv[2]
-   case 4:
-    self.Set(argv[0],argv[1],argv[2],argv[3])
-   case 5:
-    self.Set(argv[0],argv[1],argv[2],argv[3])
-    self.a=argv[4]
-   default: 
+  args=len(argv)
+  if ( args == 1 ):
+   self.Set(argv[0],0)
+  elif ( args == 2 ):
+   self.Set(argv[0],argv[1])
+  elif ( args == 3 ):
+   self.Set(argv[0],argv[1])
+   self.a=argv[2]
+  elif ( args == 4 ):
+   self.Set(argv[0],argv[1],argv[2],argv[3])
+  elif ( args == 5 ):
+   self.Set(argv[0],argv[1],argv[2],argv[3])
+   self.a=argv[4]
  def Init(self):
   self.x=0.0
   self.y=0.0
@@ -202,7 +200,6 @@ class Cartesian:
   vector_x=self.x2-self.x
   vector_y=self.y2-self.y
   return sqrt( vector_x, vector_y )
- }
  def is2d(self):
   return (self.z2 != null and self.z != null)
  def DistancePointSegment( self, px,py,pz=null ):
@@ -241,89 +238,87 @@ class Cartesian:
    return JSON.stringify( self.toObject(stringFormat) )
  def toObject( self, objectFormat=null ):
   if ( objectFormat === null ): # default format, best guess
-   match self.type:
-    case "point":
-     return self.z===null?{x:self.x,y:self.y}:{x:self.x,y:self.y,z:self.z} # x,y or x,y,z
-    case "circle":
-     return {x:self.x,y:self.y,radius:self.w2} # x,y,R
-    case "linerect" | "rectangle":
-     return {x:self.x,y:self.y,w:self.w,h:self.h} # x,y,w,h
-    default:
-     return {
-      x:self.x,
-      y:self.y,
-      z:self.z,
-      x2:self.x2,
-      y2:self.y2,
-      z2:self.z2,
-      w:self.w,
-      w2:self.w2,
-      h:self.h,
-      h2:self.h2,
-      d:self.d,
-      d2:self.d2,
-      a:self.a,
-      name:self.name,
-      data:self.data,
-      length:self.length,
-      type:self.type
-     }
+   if self.type == "point":
+    return self.z===null?{x:self.x,y:self.y}:{x:self.x,y:self.y,z:self.z} # x,y or x,y,z
+   elif self.type == "circle":
+    return {x:self.x,y:self.y,radius:self.w2} # x,y,R
+   elif self.type == "linerect" or self.type == "rectangle":
+    return {x:self.x,y:self.y,w:self.w,h:self.h} # x,y,w,h
+   else:
+    return {
+     x:self.x,
+     y:self.y,
+     z:self.z,
+     x2:self.x2,
+     y2:self.y2,
+     z2:self.z2,
+     w:self.w,
+     w2:self.w2,
+     h:self.h,
+     h2:self.h2,
+     d:self.d,
+     d2:self.d2,
+     a:self.a,
+     name:self.name,
+     data:self.data,
+     length:self.length,
+     type:self.type
+    }
   else:
-   match objectFormat:
-    case "xy":
-     return { x:self.x, y:self.y }
-    case "xyz":
+   if objectFormat == "xy":
+    return { x:self.x, y:self.y }
+   elif objectFormat == "xyz":
      return { x:self.x, y:self.y, z:self.z }
-    case "linerect" | "rect" | "xywh":
+   elif objectFormat == "linerect" or objectFormat == "rect" or objectFormat == "xywh":
      return { x:self.x, y:self.y, w:self.w, h:self.h }
-    case "circle" | "xyr":
+   elif objectFormat == "circle" or objectFormat == "xyr":
      return { x:self.x, y:self.y, radius:self.w2 }
-    case "xyd":
+   elif objectFormat == "xyd":
      return { x:self.x, y:self.y, diameter:self.w }
-    case "line" | "corners":
+   elif objectFormat == "line" or objectFormat == "corners":
      return { x:self.x, y:self.y, x2:self.x2, y2:self.y2 }
-    case "quad" | "abcd":
+   elif objectFormat == "quad" or objectFormat == "abcd":
      return { a:{x:self.x, y:self.y}, b:{x:self.x1,y:self.y}, c:{x:self.x2, y:self.y2}, d:{x:self.x,y:self.y2} }
-    case "default":
-	 return {
-      x:self.x,
-      y:self.y,
-      z:self.z,
-      x2:self.x2,
-      y2:self.y2,
-      z2:self.z2,
-      w:self.w,
-      w2:self.w2,
-      h:self.h,
-      h2:self.h2,
-      d:self.d,
-      d2:self.d2,
-      a:self.a,
-      name:self.name,
-      data:self.data,
-      length:self.length,
-      type:self.type
-     }
-    default:
-     return {
-      x:self.x,
-      y:self.y,
-      z:self.z,
-      x2:self.x2,
-      y2:self.y2,
-      z2:self.z2,
-      w:self.w,
-      w2:self.w2,
-      h:self.h,
-      h2:self.h2,
-      d:self.d,
-      d2:self.d2,
-      a:self.a,
-      name:self.name,
-      data:self.data,
-      length:self.length,
-      type:self.type
-     }
+   elif objectFormat == "default":
+	return {
+     x:self.x,
+     y:self.y,
+     z:self.z,
+     x2:self.x2,
+     y2:self.y2,
+     z2:self.z2,
+     w:self.w,
+     w2:self.w2,
+     h:self.h,
+     h2:self.h2,
+     d:self.d,
+     d2:self.d2,
+     a:self.a,
+     name:self.name,
+     data:self.data,
+     length:self.length,
+     type:self.type
+    }
+   else:
+    return {
+     x:self.x,
+     y:self.y,
+     z:self.z,
+     x2:self.x2,
+     y2:self.y2,
+     z2:self.z2,
+     w:self.w,
+     w2:self.w2,
+     h:self.h,
+     h2:self.h2,
+     d:self.d,
+     d2:self.d2,
+     a:self.a,
+     name:self.name,
+     data:self.data,
+     length:self.length,
+     type:self.type
+    }
  def toArray( self, arrayFormat=null ):
   a=[]
   if ( arrayFormat == null ): # default format, best guess
@@ -351,48 +346,47 @@ class Cartesian:
      if ( self.h != null ):
       a.append(self.y2)
   else:
-   match arrayFormat:
-    case "xy":
-     return [ self.x, self.y ]
-    case "xyz":
-     return [ self.x, self.y, self.z ]
-    case "linerect" | "rect" | "rectangle" | "xywh":
-     return [ self.x, self.y, self.w, self.h ]
-    case "circle" | "xyr":
-     return [self.x, self.y, self.w2 ]
-    case "xyd":
-     return [self.x,self.y, self.w]
-    case "line" | "corners":
-     return [self.x,self.y,self.x2,self.y2]
-    case "quad" | "cwrect":
-     return [self.x,self.y,self.x2,self.y,self.x2,self.y2,self.x,self.y2]
-    case "ccwrect":
-     return self.toArray("cwrect")[::-1]
-    case "default":
-     if ( self.x != null ):
-      a.append(self.x)
-     if ( self.y != null ):
-      a.append(self.y)
-     if ( self.x2 != null ):
-      a.append(self.x2)
-     if ( self.y2 != null ):
-      a.append(self.y2)
-     if ( self.w != null ):
-      a.append(self.x2)
-     if ( self.h != null ):
-      a.append(self.y2)
-     return a
-    default: # default->default format, best guess
-     if ( self.x != null ):
-      a.append(self.x)
-     if ( self.y != null ):
-      a.append(self.y)
-     if ( self.x2 != null ):
-      a.append(self.x2)
-     if ( self.y2 != null ):
-      a.append(self.y2)
-     if ( self.w != null ):
-      a.append(self.x2)
-     if ( self.h != null ):
-      a.append(self.y2)
-     return a
+   if arrayFormat == "xy":
+    return [ self.x, self.y ]
+   elif arrayFormat == "xyz":
+    return [ self.x, self.y, self.z ]
+   elif arrayFormat == "linerect" or arrayFormat == "rect" or arrayFormat == "rectangle" or arrayFormat == "xywh":
+    return [ self.x, self.y, self.w, self.h ]
+   elif arrayFormat == "circle" or arrayFormat == "xyr":
+    return [self.x, self.y, self.w2 ]
+   elif arrayFormat == "xyd":
+    return [self.x,self.y, self.w]
+   elif arrayFormat == "line" or arrayFormat == "corners":
+    return [self.x,self.y,self.x2,self.y2]
+   elif arrayFormat == "quad" or arrayFormat == "cwrect":
+    return [self.x,self.y,self.x2,self.y,self.x2,self.y2,self.x,self.y2]
+   elif arrayFormat == "ccwrect":
+    return self.toArray("cwrect")[::-1]
+   elif arrayFormat == "default":
+    if ( self.x != null ):
+     a.append(self.x)
+    if ( self.y != null ):
+     a.append(self.y)
+    if ( self.x2 != null ):
+     a.append(self.x2)
+    if ( self.y2 != null ):
+     a.append(self.y2)
+    if ( self.w != null ):
+     a.append(self.x2)
+    if ( self.h != null ):
+     a.append(self.y2)
+    return a
+   else: # default->default format, best guess
+    if ( self.x != null ):
+     a.append(self.x)
+    if ( self.y != null ):
+     a.append(self.y)
+    if ( self.x2 != null ):
+     a.append(self.x2)
+    if ( self.y2 != null ):
+     a.append(self.y2)
+    if ( self.w != null ):
+     a.append(self.x2)
+    if ( self.h != null ):
+     a.append(self.y2)
+    return a
