@@ -1,6 +1,6 @@
 # Based on https://github.com/LAGameStudio/lawg/blob/trunk/engine/la.geo.js
 class Cartesian:
- def __init(self, *argv):
+ def __init__(self, *argv):
   self.Init()
   args=len(argv)
   if ( args == 1 ):
