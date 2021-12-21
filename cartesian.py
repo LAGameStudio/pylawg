@@ -107,7 +107,7 @@ class Cartesian:
  def PointOnCircle( self, time, scale=1.0 ):
   return Cartesian( self.x + cos(time*PI*2)*self.Radius()*scale, self.y + sin(time*PI*2)*self.Radius()*scale, self.z )
  def LineTime( self, x, y ):
-  c = new Cartesian()
+  c = Cartesian()
   c.Corners(self.x,self.y,x,y)
   return c.Distance2d()/self.Distance2d()
  def Translate( self, dx, dy ):
@@ -178,7 +178,7 @@ class Cartesian:
   rads = self.deg2rad(deg)
   _cos = cos(rads)
   _sin = sin(rads)
-  return new Cartesian(
+  return Cartesian(
    (_cos * (self.x - cx)) + (_sin * (self.y - cy)) + cx,
    (_cos * (self.y - cy)) - (_sin * (self.x - cx)) + cy
   )
