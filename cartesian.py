@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, atan2, cos, sin
 # Based on https://github.com/LAGameStudio/lawg/blob/trunk/engine/la.geo.js
 class Cartesian:
  def __init__(self, *argv):
