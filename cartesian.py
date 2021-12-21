@@ -19,23 +19,26 @@ class Cartesian:
   self.x=0.0
   self.y=0.0
   self.z=0.0
-  self.x2=null
-  self.y2=null
-  self.z2=null
-  self.w=null
-  self.w2=null
-  self.h=null
-  self.h2=null
-  self.d=null
-  self.d2=null
-  self.a=null
+  self.x2=None
+  self.y2=None
+  self.z2=None
+  self.w=None
+  self.w2=None
+  self.h=None
+  self.h2=None
+  self.d=None
+  self.d2=None
+  self.a=None
   self.name=""
   self.data={}
-  self._data=null # Used for comparators.
+  self._data=None # Used for comparators.
   self.length=0
   self.type="point"
+  self.PI      =  3.1415926535897932384626433832795
+  self.TWO_PI  = (3.1415926535897932384626433832795*2.0)
+  self.HALF_PI = (3.1415926535897932384626433832795/2.0)
  def Update(self):
-  if ( self.x != null and self.y != null and self.w != null and self.h != null ):
+  if ( self.x != None and self.y != None and self.w != None and self.h != None ):
    self.type="linerect"
    self.w2=self.w/2.0
    self.h2=self.h/2.0
@@ -43,38 +46,38 @@ class Cartesian:
    self.y2=self.y+self.h
    self.length=self.Distance2d()
    self.a=self.LineAngle()
-  elif ( self.x != null and self.y != null and self.w != null and self.h == null ):
+  elif ( self.x != None and self.y != None and self.w != None and self.h == None ):
    self.type="circle"
    self.w2=self.w/2.0
-   self.h2=null
-   self.x2=null
-   self.y2=null
-   self.h=null
+   self.h2=None
+   self.x2=None
+   self.y2=None
+   self.h=None
    self.length=0
-   self.a=null
-  elif ( self.x != null and self.y != null ):
+   self.a=None
+  elif ( self.x != None and self.y != None ):
    self.type="point"
-   self.w2=null
-   self.h2=null
-   self.x2=null
-   self.y2=null
-   self.w=null
-   self.h=null
+   self.w2=None
+   self.h2=None
+   self.x2=None
+   self.y2=None
+   self.w=None
+   self.h=None
    self.length=0
-   self.a=null
- def Set( self, x, y, w=null, h=null ):
-  if (y == null and self.__class__ == "Cartesian"):
+   self.a=None
+ def Set( self, x, y, w=None, h=None ):
+  if (y == None and self.__class__ == "Cartesian"):
    self.Set(x.x,x.y,x.w,x.h)
    self.Update()
    return
   self.x=x
   self.y=y
-  if ( w != null ):
+  if ( w != None ):
    self.w=w
-  if ( h != null ): 
+  if ( h != None ): 
    self.h=h
   self.Update()
- def SetPoint( self, x, y, z=null ):
+ def SetPoint( self, x, y, z=None ):
   self.Init()
   self.Set(x,y)
   self.z=z
@@ -115,19 +118,19 @@ class Cartesian:
  def MoveBy( self, dx, dy ):
   self.Set( x+dx, y+dy )
  def Aspect(self):
-  if ( type === "linerect" ):
+  if ( self.type == "linerect" ):
    return self.w/self.h
   else:
-   return false
+   return False
  def AspectInverse(self):
-  if ( type === "linerect" ):
+  if ( self.type == "linerect" ):
    return self.h/self.w
   else:
-   return false
+   return False
  def rad2deg( self, r ):
-  return r*(180/Math.PI)
+  return r*(180/self.PI)
  def deg2rad( self, d ):
-  return d*(Math.PI/180)
+  return d*(self.PI/180)
  def LineAngle(self):
   return atan2( self.h, self.w )
  def Distance2d(self):
@@ -148,13 +151,13 @@ class Cartesian:
   return { x:self.x + self.w2, y:self.y + self.h2 }
  def Add(self,c):
   self.SetPoint(c.x+self.x,c.y+self.y,c.z+self.z)
- def Scale(self,x,y=null):
-  if ( y != null ):
+ def Scale(self,x,y=None):
+  if ( y != None ):
    self.Set(self.x*x,self.y*y)
   else:
    self.Set(self.x*x,self.y*x)
- def RotateZY( self, deg, sourcePoint=null ):
-  if ( sourcePoint == null ):
+ def RotateZY( self, deg, sourcePoint=None ):
+  if ( sourcePoint == None ):
    sourcePoint = Cartesian(0,0)
   rads=self.deg2rad(deg)
   oZ = (sourcePoint.z + (-self.z))
@@ -201,45 +204,55 @@ class Cartesian:
   vector_y=self.y2-self.y
   return sqrt( vector_x, vector_y )
  def is2d(self):
-  return (self.z2 != null and self.z != null)
- def DistancePointSegment( self, px,py,pz=null ):
-  is2d = self.is2d() or pz == null
-  if ( pz == null ):
+  return (self.z2 != None and self.z != None)
+ def DistancePointSegment( self, px,py,pz=None ):
+  is2d = self.is2d() or pz == None
+  if ( pz == None ):
    pz = 0.0
   lineMag=self.LineMagnitude()
-  U=( ( ( px - self.x ) * ( self.x2 - self.x ) ) +
-      ( ( py - self.y ) * ( self.y2 - self.y ) ) +
-      (!is2d?( ( pz - self.z ) * ( self.z2 - self.z ) ):(0)) ) /
-      ( lineMag * lineMag )
-  if ( U > 0.0 || U > 1.0 ):
-   return false # closest point does not fall within the line segment
-  intersection = Cartesian()
-  d = Cartesian()
   if ( is2d ):
+   U=( ( ( px - self.x ) * ( self.x2 - self.x ) ) + ( ( py - self.y ) * ( self.y2 - self.y ) ) + ( ( pz - self.z ) * ( self.z2 - self.z ) ) ) / ( lineMag * lineMag )
+   if ( U > 0.0 or U > 1.0 ):
+    return False # closest point does not fall within the line segment
+   intersection = Cartesian()
+   d = Cartesian()
    intersection.SetPoint( self.x+U*(self.x2-self.x), self.y+U*(self.y2-self.y) )
    d.SetCorners(px,py,intersection.x,intersection.y)
+   return {
+    intersection: intersection,
+    linelerp: U,
+    distance: d.Distance2d()
+   }
   else:
+   U=( ( ( px - self.x ) * ( self.x2 - self.x ) ) + ( ( py - self.y ) * ( self.y2 - self.y ) ) + (0) ) / ( lineMag * lineMag )
+   if ( U > 0.0 or U > 1.0 ):
+    return False # closest point does not fall within the line segment
+   intersection = Cartesian()
+   d = Cartesian()
    intersection.SetPoint( self.x+U*(self.x2-self.x), self.y+U*(self.y2-self.y), self.z+U*(self.z2-self.z) )
    d.SetCorners(px,py,pz,intersection.x,intersection.y,intersection.z)
-  return {
-   intersection: intersection,
-   linelerp: U,
-   distance: (is2d?d.Distance2d():d.Distance3d())
-  }
+   return {
+    intersection: intersection,
+    linelerp: U,
+    distance: d.Distance3d()
+   }
  def PointOnLine( self, tx, ty, nearness=1.0 ):
   result=DistancePointSegment(tx,ty)
-  if ( result === false ):
-   return false
+  if ( result == False ):
+   return False
   return result.distance < nearness
- def toString( self, stringFormat=null ):
-  if ( stringFormat === null ):
+ def toString( self, stringFormat=None ):
+  if ( stringFormat == None ):
    return JSON.stringify(this)
   else:
    return JSON.stringify( self.toObject(stringFormat) )
- def toObject( self, objectFormat=null ):
-  if ( objectFormat === null ): # default format, best guess
+ def toObject( self, objectFormat=None ):
+  if ( objectFormat == None ): # default format, best guess
    if self.type == "point":
-    return self.z===null?{x:self.x,y:self.y}:{x:self.x,y:self.y,z:self.z} # x,y or x,y,z
+    if self.z == None:
+     return {x:self.x,y:self.y}
+    else:
+     return {x:self.x,y:self.y,z:self.z} # x,y or x,y,z
    elif self.type == "circle":
     return {x:self.x,y:self.y,radius:self.w2} # x,y,R
    elif self.type == "linerect" or self.type == "rectangle":
@@ -280,8 +293,7 @@ class Cartesian:
    elif objectFormat == "quad" or objectFormat == "abcd":
      return { a:{x:self.x, y:self.y}, b:{x:self.x1,y:self.y}, c:{x:self.x2, y:self.y2}, d:{x:self.x,y:self.y2} }
    elif objectFormat == "default":
-	return {
-     x:self.x,
+    return { x:self.x,
      y:self.y,
      z:self.z,
      x2:self.x2,
@@ -300,8 +312,7 @@ class Cartesian:
      type:self.type
     }
    else:
-    return {
-     x:self.x,
+    return { x:self.x,
      y:self.y,
      z:self.z,
      x2:self.x2,
@@ -319,32 +330,31 @@ class Cartesian:
      length:self.length,
      type:self.type
     }
- def toArray( self, arrayFormat=null ):
+ def toArray( self, arrayFormat=None ):
   a=[]
-  if ( arrayFormat == null ): # default format, best guess
-   match self.type:
-    case "point":
-	 if ( self.z == null ):
-	  return [self.x,self.y]
-	 else:
-	  return [self.x,self.y,self.z]
-    case "circle":
-     return [self.x,self.y,self.w2] # x,y,R
-    case "linerect" | "rectangle":
-	 return [self.x,self.y,self.w,self.h] # x,y,w,h
-    default: # default->default format, best guess
-     if ( self.x != null ):
-      a.append(self.x)
-     if ( self.y != null ):
-      a.append(self.y)
-     if ( self.x2 != null ):
-	  a.append(self.x2)
-     if ( self.y2 != null ):
-      a.append(self.y2)
-     if ( self.w != null ):
-      a.append(self.x2)
-     if ( self.h != null ):
-      a.append(self.y2)
+  if ( arrayFormat == None ): # default format, best guess
+   if self.type == "point":
+    if ( self.z == None ):
+     return [self.x,self.y]
+    else:
+     return [self.x,self.y,self.z]
+   elif self.type == "circle":
+    return [self.x,self.y,self.w2] # x,y,R
+   elif self.type == "linerect" or self.type == "rectangle":
+    return [self.x,self.y,self.w,self.h] # x,y,w,h
+   else: # default->default format, best guess
+    if ( self.x != None ):
+     a.append(self.x)
+    if ( self.y != None ):
+     a.append(self.y)
+    if ( self.x2 != None ):
+     a.append(self.x2)
+    if ( self.y2 != None ):
+     a.append(self.y2)
+    if ( self.w != None ):
+     a.append(self.x2)
+    if ( self.h != None ):
+     a.append(self.y2)
   else:
    if arrayFormat == "xy":
     return [ self.x, self.y ]
@@ -363,30 +373,30 @@ class Cartesian:
    elif arrayFormat == "ccwrect":
     return self.toArray("cwrect")[::-1]
    elif arrayFormat == "default":
-    if ( self.x != null ):
+    if ( self.x != None ):
      a.append(self.x)
-    if ( self.y != null ):
+    if ( self.y != None ):
      a.append(self.y)
-    if ( self.x2 != null ):
+    if ( self.x2 != None ):
      a.append(self.x2)
-    if ( self.y2 != null ):
+    if ( self.y2 != None ):
      a.append(self.y2)
-    if ( self.w != null ):
+    if ( self.w != None ):
      a.append(self.x2)
-    if ( self.h != null ):
+    if ( self.h != None ):
      a.append(self.y2)
     return a
    else: # default->default format, best guess
-    if ( self.x != null ):
+    if ( self.x != None ):
      a.append(self.x)
-    if ( self.y != null ):
+    if ( self.y != None ):
      a.append(self.y)
-    if ( self.x2 != null ):
+    if ( self.x2 != None ):
      a.append(self.x2)
-    if ( self.y2 != null ):
+    if ( self.y2 != None ):
      a.append(self.y2)
-    if ( self.w != null ):
+    if ( self.w != None ):
      a.append(self.x2)
-    if ( self.h != null ):
+    if ( self.h != None ):
      a.append(self.y2)
     return a
