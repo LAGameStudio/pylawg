@@ -1,4 +1,5 @@
 from math import sqrt, atan2, cos, sin
+import json
 # Based on https://github.com/LAGameStudio/lawg/blob/trunk/engine/la.geo.js
 class Cartesian:
  def __init__(self, *argv):
@@ -244,9 +245,9 @@ class Cartesian:
   return result.distance < nearness
  def toString( self, stringFormat=None ):
   if ( stringFormat == None ):
-   return JSON.stringify(this)
+   return json.dumps(self.__dict__)
   else:
-   return JSON.stringify( self.toObject(stringFormat) )
+   return json.dumps( self.toObject(stringFormat) )
  def toObject( self, objectFormat=None ):
   if ( objectFormat == None ): # default format, best guess
    if self.type == "point":
